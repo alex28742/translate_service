@@ -1,0 +1,14 @@
+{
+  "name": "bower",
+  "description": "translate_service",
+  "main": "gulpfile.js",
+  "license": "ISC",
+  "homepage": "https://github.com/alex28742/translate_service",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
