@@ -30,10 +30,10 @@ $(function() {
 
 
   function upperCase(string){
-    string = string+'';
+    temp = string+'';
     console.log(string);
     var i = string.slice(0,1);
-    var str = string.slice(1);
+    var str = temp.slice(1);
     i = i.toUpperCase();
     console.log(i.concat(str));
     return i.concat(str);
@@ -41,6 +41,7 @@ $(function() {
 
 
   function max10Handler(){
+    if(value == null) return false;
     if(value.length > 1) return;
     switch (Number(value)) {
       case 1:one = 'один';rub = 'рубль';  break;
@@ -58,7 +59,7 @@ $(function() {
 
   function max999Handler(){ // на вход трехзначное число
     var one = value[0], two = value[1], third = value[2];
-    switch (one*1) {
+    switch (Number(one)) {
       case 1: hundred = 'сто'; break;
       case 2: hundred = 'двести'; break;
       case 3: hundred = 'триста'; break;
@@ -71,12 +72,14 @@ $(function() {
       default: hundred = 'defaultHundred'; rub = 'defaultHundredRub';
 
     }
+    value = two.concat(third);
     rub = 'рублей';
     console.log('max999Handler -> hundred: '+hundred);
   }
 
   function max99Handler(){ // на вход двухзначное число
     if(Number(value) < 20){
+      console.log('number < 20 value = '+value*1);
       switch (Number(value)) {
         case 10: ten = 'десять'; rub = 'рублей'; break;
         case 11: ten = 'одинадцать'; rub = 'рублей'; break;
@@ -88,23 +91,29 @@ $(function() {
         case 17: ten = 'семнадцать'; rub = 'рублей'; break;
         case 18: ten = 'восемнадцать'; rub = 'рублей'; break;
         case 19: ten = 'девятнадцать'; rub = 'рублей'; break;
-        default: ten = 'defaultTen';
+        default: ten = '';
 
       }
+      value = null;
     }
-    else if(Number(value) < 100){ // from 20 to 99
-      switch (Number(value)) {
-        case 2: ten = 'двадцать'; break;
-        case 3: ten = 'тридцать'; break;
-        case 4: ten = 'сорок'; break;
-        case 5: ten = 'пятьдесят'; break;
-        case 6: ten = 'шестьдесят'; break;
-        case 7: ten = 'семьдесят'; break;
-        case 8: ten = 'восемьдесят'; break;
-        case 9: ten = 'девяносто'; break;
-        default: ten = 'ошибка в from 20 to 99';
+    else if(Number(value) < 100){ // от 20 до 99
+      console.log('value = '+value);
+      var one = value[0], two = value[1];
+      if(one != 0){ console.log('это я здесь ->'+one);
+        switch (Number(one)) {
+          case 2: ten = 'двадцать'; break;
+          case 3: ten = 'тридцать'; break;
+          case 4: ten = 'сорок'; break;
+          case 5: ten = 'пятьдесят'; break;
+          case 6: ten = 'шестьдесят'; break;
+          case 7: ten = 'семьдесят'; break;
+          case 8: ten = 'восемьдесят'; break;
+          case 9: ten = 'девяносто'; break;
+          default: ten = 'ошибка в from 20 to 99';
 
+        }
       }
+      value = two;
       console.log('ten = '+ten);
       console.log('rub = '+rub);
       // конкатенация с тем, что вернет функция от 1 до 9
@@ -113,14 +122,14 @@ $(function() {
   }
 
   function splitter(){
-    console.log('in splitter');
-    if(value.length == 3) {
+    console.log('in splitter value.length = '+value.length);
+    if(Number(value) > 99) {
       max999Handler();
       max99Handler();
       max10Handler();
     }
-    else if(value.length == 2){
-      console.log('value > 99: value.lenght = '+value.length);
+    else if(Number(value) > 9){
+      console.log('value > 9: value.lenght = '+value.length);
       max99Handler();
       max10Handler();
     }
@@ -132,7 +141,7 @@ $(function() {
   }
 
   function insertRes(){
-    var res = 'результат:'+million+' '+million_split+' '+thousand+' '+thousand_split+' '+hundred+' '+ten+' '+one+' '+rub+' '+kop+' '+kop_split+'';
+    var res = ''+million+' '+million_split+' '+thousand+' '+thousand_split+' '+hundred+' '+ten+' '+one+' '+rub+' '+kop+' '+kop_split+'';
     if(flagUpper) res = upperCase(res);
     $('.output').text(res);
   }
@@ -141,6 +150,7 @@ $(function() {
   $('.go').on('click',function(){
     clear_fild();
     value = $.trim($('.getting').val());
+    buffer = value;
     if(!isNan()) { alertError(); return false; }
     splitter();
     insertRes();
